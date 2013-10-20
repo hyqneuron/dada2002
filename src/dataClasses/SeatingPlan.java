@@ -1,0 +1,62 @@
+package dataClasses;
+
+public class SeatingPlan  implements java.io.Serializable{
+	// we use 0 to represent void space, 1 to represent seat
+	private int[][] seats;
+	// number of rows of seat matrix
+	private int rowCount;
+	// number of columns of the seat matrix
+	private int columnCount;
+	public SeatingPlan(int[][] seats)
+	{
+		this.seats = seats;
+		rowCount = seats.length;
+		columnCount = 0;
+		for(int i = 0; i<rowCount; i++){
+			if(seats[i].length>columnCount)
+				columnCount = seats[i].length;
+		}
+	}
+	public int getColumnCount(){
+		return columnCount;
+	}
+	public int getRowCount(){
+		return rowCount;
+	}
+	// return whether the indexed position is a seat or void space
+	// true for seat, false for void space
+	public Boolean isSeat(int rowIdx, int columnIdx){
+		if(rowIdx < 0 || rowIdx >= getRowCount())
+			return false;
+		if(columnIdx < 0 || columnIdx >= getColumnCount())
+			return false;
+		return seats[rowIdx][columnIdx]==1;
+	}
+
+	// convert the seat index into a seat name string like A10 or F2
+	public String getSeatName(int rowIdx, int columnIdx){
+		if(!isSeat(rowIdx, columnIdx))
+			return "";
+		char row = (char)(rowIdx + (int)'A');
+		int colNameIdx=0;
+		for(int i = 0; i<= columnIdx ;i++)
+			if(isSeat(rowIdx, i))
+				colNameIdx++;
+		return row + String.valueOf(colNameIdx);
+	}
+	public int[] getSeatIndex(String seatName){
+		seatName.trim();
+		if(seatName.length()<2 || seatName.length()>3)
+			return null;
+		if(seatName.charAt(0)<'A' || seatName.charAt(0)>'Z')
+			return null;
+		if(seatName.charAt(1)<'0' || seatName.charAt(1)>'9')
+			return null;
+		if(seatName.length()==3 && (seatName.charAt(2)<'0' || seatName.charAt(2)>'9'))
+			return null;
+		int[] result = new int[2];
+		result[0] = (int)seatName.charAt(0)-(int)'A';
+		result[1] = Integer.parseInt(seatName.substring(1));
+		return result;
+	}
+}
