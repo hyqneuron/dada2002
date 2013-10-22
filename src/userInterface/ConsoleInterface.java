@@ -331,25 +331,30 @@ public class ConsoleInterface {
 			Menu menu;
 			if(loginType==LoginType.Customer)
 				menu = new Menu("Home", "Customer Main Menu", new MenuOption[]{
-						new MenuOption("List movies", 			menuListMovies),
-						new MenuOption("Book movie", 			actionBookMovie),
-						new MenuOption("Check booking status", 	actionCheckBooking),
-						new MenuOption("Check booking history",	actionCheckHistory),
+						new MenuOption("List Movies", 			menuListMovies),
+						new MenuOption("Book Movie", 			actionBookMovie),
+						new MenuOption("Check Booking Status", 	actionCheckBooking),
+						new MenuOption("Check Booking History",	actionCheckHistory),
 						new MenuOption("Leave", 				actionLeave)
 					});
 			else if(loginType==LoginType.None)
 				menu = new Menu("Home", "Guest Main Menu", new MenuOption[]{
-						new MenuOption("List movies", 			menuListMovies),
-						new MenuOption("Book movie", 			actionBookMovie),
-						new MenuOption("Register account", 		actionRegisterCustomer),
+						new MenuOption("List Movies", 			menuListMovies),
+						new MenuOption("Book Movie", 			actionBookMovie),
+						new MenuOption("Register Account", 		actionRegisterCustomer),
 						new MenuOption("Log in", 				actionLogin, true),
-						new MenuOption("Check booking status", 	actionCheckBooking),
+						new MenuOption("Check Booking Status", 	actionCheckBooking),
 						new MenuOption("Leave", 				actionLeave)
 					});
 			else // staff
 				menu = new Menu("Home", "Staff Main Menu", new MenuOption[]{
-						new MenuOption("List movies", 			menuListMovies)
-						// fille up
+						new MenuOption("List Movies", 			menuListMovies),
+						new MenuOption("Edit Movies", 			menuEditMovies),
+						new MenuOption("Edit Shows", 			menuEditShows),
+						new MenuOption("Reveues", 				menuRevenues),
+						new MenuOption("Change Price Policy",   menuPricePolicy),
+						new MenuOption("Book movie",			actionBookMovie),
+						new MenuOption("Leave", 				actionLeave)
 				});
 			ShowMenu(menu);
 		}
@@ -582,6 +587,49 @@ public class ConsoleInterface {
 	private MenuAction actionBack = new MenuAction(){
 		public void Show(Object o){
 			LeaveSubMenu();
+		}
+	};
+	
+	private MenuAction menuPricePolicy = new MenuAction(){
+		public void Show(Object o){
+			Menu menu = new Menu("Price Policy", "Price Policy Menu", new MenuOption[]{
+					new MenuOption("Change Increment for premium cinema", actionChangePolicy, 0),
+					new MenuOption("a", actionChangePolicy, 1),
+					new MenuOption("b", actionChangePolicy, 2),
+					new MenuOption("c", actionChangePolicy, 3)
+			});
+			ShowMenu(menu);
+		}
+	};
+
+	private MenuAction menuEditMovies = new MenuAction(){
+		public void Show(Object o){
+			
+		}
+	};
+
+	private MenuAction menuEditShows= new MenuAction(){
+		public void Show(Object o){
+			
+		}
+	};
+
+	private MenuAction menuRevenues = new MenuAction(){
+		public void Show(Object o){
+		}
+	};
+	
+	
+	private MenuAction actionChangePolicy = new MenuAction(){
+		public void Show(Object o){
+			int choice = (int) o;
+			if(choice==0)
+			{
+				// we doing for premium cinema
+			}
+			else if(choice == 1){
+				
+			}
 		}
 	};
 
