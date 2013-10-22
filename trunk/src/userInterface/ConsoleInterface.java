@@ -10,7 +10,10 @@ public class ConsoleInterface {
 
 	/*
 	 * This class handles our console UI, which is a hierarchical menu system
-	 * A menu page would look like this:
+	 * 
+	 * Our menu system are based on 3 objects: Menu, MenuOption, and MenuAction
+	 * 
+	 * A Menu, when shown, would look like this:
 	 * 
 	 * Home > Listing > Cineplex 2
 	 * 1. List all movies
@@ -19,38 +22,39 @@ public class ConsoleInterface {
 	 * 4. Book movie
 	 * 5. Leave
 	 * 
-	 * In the page above, we have 5 menu options, and a title bar on top
-	 * A page is specified as an
+	 * In the example above, we have a title bar on top, and 5 menu options
 	 * 
-	 * Our menu is hierarchical, so a stack is used to represent the layers (e.g. Home, Listing)
-	 * The stack object we use is menuStack; it contains all of the menu pages we are showing, 
-	 * including the current one. In the example above, we have 3 visible pages (Home, Listing, and Cineplex 2)
-	 * However, there is actually another page (login page) that is not shown in the title bar
-	 * So for the example above, we have 4 pages in our menuStack(login, main, listing, and cineplex 2)
+	 * Our menu is hierarchical, so a stack is used to represent the layers (e.g. Home > Listing > ...)
+	 * The stack object we use is menuStack
 	 * 
-	 * Each menu page has 3 components:
+	 * Each Menu has 3 components:
 	 * 1. a name
 	 * 2. a title
 	 * 3. a set of options
-	 * Name is a shorter version of title. For example, we may have a page with title "Customer Main Menu",
-	 * but the name for that page is simply "Home". When a page is shown, its title would appear in the title bar,
-	 * but when the page's sub-menu is shown, then only its name would appear. This is to shorten the length
-	 * of the title bar and make it more concise
+	 * Name and title are both String, and are only shown in the title bar. Name is a shorter version of 
+	 * title to keep the title bar short
 	 * 
-	 * For our example above, the current page has a title "Cineplex 2", and the pages "above" it have name
-	 * "Listing" and "Home"
+	 * menu options are built using the MenuOption object,
+	 * each with a String to be shown in its containing menu, a MenuAction that is executed
+	 * when the option is chosen, and an optional parameter that may be passed to MenuAction
+	 * when it is executed.
 	 * 
 	 * 
 	 */
-	
-	// menu contains menu option, name and title
-	// menu option has action, str and param
-	// action does some stuff, or create a new menu and push it
+	/*
+	 * Home > Listing > Cineplex 2
+	 * 1. List all movies
+	 * 2. List all shows
+	 * 3. List shows for specific movie
+	 * 4. Book movie
+	 * 5. Leave
+	 */
 	private class MenuOption
 	{
-		public String optionString;
+		public String optionString; // eg "List all shows"
 		public MenuAction action;
 		public Object parameter;
+		
 		public MenuOption(String optionStr, MenuAction action)
 		{
 			this(optionStr, action, null);
@@ -70,8 +74,8 @@ public class ConsoleInterface {
 	}
 	private class Menu
 	{
-		public String name;
-		public String title;
+		public String name;  // e.g. "Home"
+		public String title; // e.g. "Customer Main Menu"
 		public MenuOption[] options;
 		public Menu(String name, String title, MenuOption[] options)
 		{
