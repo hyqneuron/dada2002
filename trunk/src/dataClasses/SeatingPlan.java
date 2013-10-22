@@ -44,8 +44,13 @@ public class SeatingPlan  implements java.io.Serializable{
 				colNameIdx++;
 		return row + String.valueOf(colNameIdx);
 	}
+	
+	// convert a string seatName to int[]{rowIdx, colIdx} that can be used to address a specific seat
 	public int[] getSeatIndex(String seatName){
+		// remove extra stuffs in seatName (spaces)
 		seatName.trim();
+		// check that seatName is of length 2 or 3, and is of correct format Xnn
+		// (X is an upper case letter, nn is a 1 or 2-digit number) 
 		if(seatName.length()<2 || seatName.length()>3)
 			return null;
 		if(seatName.charAt(0)<'A' || seatName.charAt(0)>'Z')
@@ -54,9 +59,22 @@ public class SeatingPlan  implements java.io.Serializable{
 			return null;
 		if(seatName.length()==3 && (seatName.charAt(2)<'0' || seatName.charAt(2)>'9'))
 			return null;
+		// result is what we'll return
 		int[] result = new int[2];
-		result[0] = (int)seatName.charAt(0)-(int)'A';
-		result[1] = Integer.parseInt(seatName.substring(1));
+		int rowIdx, colIdx=-1;
+		rowIdx = (int)seatName.charAt(0)-(int)'A';
+		int seatNameColIdx = Integer.parseInt(seatName.substring(1));
+		int seatCount = 0;
+		for(int i = 0; i< getColumnCount(); i++){
+			if(isSeat(rowIdx, i))
+				seatCount++;
+			if(seatCount==seatNameColIdx)
+				colIdx = i;
+		}
+		if(colIdx==-1)
+			return null;
+		result[0] = rowIdx;
+		result[1] = colIdx;
 		return result;
 	}
 }
