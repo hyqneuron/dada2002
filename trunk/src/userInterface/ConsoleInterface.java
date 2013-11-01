@@ -622,7 +622,16 @@ public class ConsoleInterface {
 
 	private MenuAction menuEditMovies = new MenuAction(){
 		public void Show(Object o){
-			
+			ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
+			arr.add(new MenuOption("Creat a movie", actionCreateMovie));
+			arr.add(new MenuOption("Edit a movie",	actionEditMovie));
+			arr.add(new MenuOption("Delete a movie",  actionDeleteMovie));
+			arr.add(new MenuOption("Back",			actionBack));
+			MenuOption[] options = new MenuOption[arr.size()];
+			for(int i = 0; i<options.length; i++)
+				options[i] = arr.get(i);
+			Menu menu = new Menu("Listing", "Movie Listing Menu", options);
+			ShowMenu(menu);
 		}
 	};
 
@@ -650,6 +659,102 @@ public class ConsoleInterface {
 			LeaveSubMenu();
 		}
 	};
+	//==============Edit Movies =============
+	private MenuAction editMovies = new MenuAction(){
+		public void Show(Object o)
+		{
+		}
+	};
+	
+	private MenuAction actionCreateMovie = new MenuAction(){
+		public void Show(Object o){
+			Movie movie;
+			PrintLine("Please enter the name of the movie: ");
+			String name = AskForString();
+			PrintLine("Please enter the description of the movie: ");
+			String description = AskForString();
+			PrintLine("Please enter the duration of the movie: ");
+			int duration = scanner.nextInt();
+			PrintLine("Please enter the age limit of the movie: ");
+			int ageLimit = scanner.nextInt();
+			PrintLine("Please enter the movie type of the movie: ");
+			String movieType = AskForString().toLowerCase();
+			if(movieType == "normal")
+				movie = new Movie(name, description, duration, ageLimit, 
+						PricePolicy.MovieType.Normal, false);
+			else
+				movie = new Movie(name, description, duration, ageLimit,
+						PricePolicy.MovieType.Blockbuster, false);
+			dataMgr.addMovie(movie);
+		}
+	};
+	
+	private MenuAction actionEditMovie = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Please enter the id of the movie: ");
+			int id = scanner.nextInt();
+			Movie movie = dataMgr.getMovie(id);
+			ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
+			arr.add(new MenuOption("Change description", actionChangeMovieDescription, movie));
+			arr.add(new MenuOption("Change duration",	actionChangeMovieDuration, movie));
+			arr.add(new MenuOption("Change age limit",  actionChangeMovieAgeLimit, movie));
+			arr.add(new MenuOption("Change movie type", actionChangeMovieType, movie));
+			arr.add(new MenuOption("Back",			actionBack));
+			MenuOption[] options = new MenuOption[arr.size()];
+			for(int i = 0; i<options.length; i++)
+				options[i] = arr.get(i);
+			Menu menu = new Menu("Listing", "Movie Listing Menu", options);
+			ShowMenu(menu);
+		}
+	};
+	
+	
+	private MenuAction actionChangeMovieDescription = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Please enter the description of the movie: ");
+			String description = AskForString();
+			((Movie)o).setDescription(description);
+		}
+	};
+	
+	private MenuAction actionChangeMovieDuration = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Please enter the duration of the movie: ");
+			int duration = scanner.nextInt();
+			((Movie)o).setDuration(duration);
+		}
+	};
+	
+	private MenuAction actionChangeMovieAgeLimit = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Please enter the age limit of the movie: ");
+			int ageLimit = scanner.nextInt();
+			((Movie)o).setAgeLimit(ageLimit);
+		}
+	};
+	
+	private MenuAction actionChangeMovieType = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Please enter the type of the movie: ");
+			String movieType = AskForString().toLowerCase();
+			if(movieType == "normal")
+				((Movie)o).setMovieType(PricePolicy.MovieType.Normal);
+			else
+				((Movie)o).setMovieType(PricePolicy.MovieType.Blockbuster);
+		}
+	};
+	
+	private MenuAction actionDeleteMovie = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Please enter the id of the movie: ");
+			int id = scanner.nextInt();
+			Movie movie = dataMgr.getMovie(id);
+			if(movie == null)
+				PrintLine("The specified movie does not exist");
+			else
+				dataMgr.removeMovie(id);
+		}
+	};
 	
 	private MenuAction actionPrintRevenue = new MenuAction(){
 		public void Show(Object o){
@@ -657,7 +762,6 @@ public class ConsoleInterface {
 	};
 	
 	private MenuAction actionChangePolicy = new MenuAction(){
-
 		public void Show(Object o){
 			int choice = (int) o;
 			float f;
