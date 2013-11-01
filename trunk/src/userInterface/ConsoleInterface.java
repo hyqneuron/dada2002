@@ -1,6 +1,7 @@
 package userInterface;
 import dataClasses.*;
 
+import java.util.Date;
 import java.awt.List;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -352,7 +353,7 @@ public class ConsoleInterface {
 						new MenuOption("Edit Movies", 			menuEditMovies),
 						new MenuOption("Edit Shows", 			menuEditShows),
 						new MenuOption("Reveues", 				menuRevenues),
-						new MenuOption("Change Price Policy",   menuPricePolicy),
+						new MenuOption("Change Pricing Policy", menuChangePricingPolicy),
 						new MenuOption("Book movie",			actionBookMovie),
 						new MenuOption("Leave", 				actionLeave)
 				});
@@ -525,6 +526,7 @@ public class ConsoleInterface {
 					dataMgr.getPricePolicy().getPrice(cusType, show));
 			// assign ticket to seat
 			status.AssignSeat(tickets[i], indices[0], indices[1]);
+			
 		}
 		// generate invoice and add invoice to system
 		Invoice invoice = new Invoice(tickets, customerLogin);
@@ -532,6 +534,7 @@ public class ConsoleInterface {
 		// print invoice and complete transaction
 		PrintInvoice(invoice);
 		PrintLine("Booking finished");
+		
 	}};
 	
 	// 3. check booking status
@@ -584,19 +587,18 @@ public class ConsoleInterface {
 			return;
 		}
 	};
-	private MenuAction actionBack = new MenuAction(){
-		public void Show(Object o){
-			LeaveSubMenu();
-		}
-	};
-	
-	private MenuAction menuPricePolicy = new MenuAction(){
+	//8. Change pricing policy
+	private MenuAction menuChangePricingPolicy = new MenuAction(){
 		public void Show(Object o){
 			Menu menu = new Menu("Price Policy", "Price Policy Menu", new MenuOption[]{
-					new MenuOption("Change Increment for premium cinema", actionChangePolicy, 0),
-					new MenuOption("a", actionChangePolicy, 1),
-					new MenuOption("b", actionChangePolicy, 2),
-					new MenuOption("c", actionChangePolicy, 3)
+					new MenuOption("Change base price", actionChangePolicy, 0),
+					new MenuOption("Change student discount", actionChangePolicy, 1),
+					new MenuOption("Change senior discount", actionChangePolicy, 2),
+					new MenuOption("Change increment for blockbuster", actionChangePolicy, 3),
+					new MenuOption("Change increment for 3D", actionChangePolicy, 4),
+					new MenuOption("Change increment for IMAX", actionChangePolicy, 5),
+					new MenuOption("Change increment for premium", actionChangePolicy, 6),
+					new MenuOption("Back",actionBack)
 			});
 			ShowMenu(menu);
 		}
@@ -616,19 +618,78 @@ public class ConsoleInterface {
 
 	private MenuAction menuRevenues = new MenuAction(){
 		public void Show(Object o){
+			Menu menu = new Menu("Revenue Printing", "Revenue Menu", new MenuOption[]{
+					new MenuOption("Movie", actionPrintRevenue, 0),
+					new MenuOption("Cinema", actionPrintRevenue, 1),
+					new MenuOption("Day", actionPrintRevenue, 2),
+					new MenuOption("Month", actionPrintRevenue, 3),
+					new MenuOption("Back",actionBack)
+			});
+			ShowMenu(menu);
 		}
 	};
 	
+	private MenuAction actionBack = new MenuAction(){
+		public void Show(Object o){
+			LeaveSubMenu();
+		}
+	};
+	
+	private MenuAction actionPrintRevenue = new MenuAction(){
+		public void Show(Object o){
+		}
+	};
 	
 	private MenuAction actionChangePolicy = new MenuAction(){
+
 		public void Show(Object o){
 			int choice = (int) o;
-			if(choice==0)
-			{
-				// we doing for premium cinema
-			}
-			else if(choice == 1){
-				
+			float f;
+			switch (choice){
+				case 0:
+					PrintLine("Please enter the new base price: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setBasePrice(f);
+					PrintLine("Current base price is: " + dataMgr.getPricePolicy().getBasePrice());
+					break;
+				case 1:
+					PrintLine("Please enter the new discount for student: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setStudentDiscount(f);
+					PrintLine("Current discount for student is: " + dataMgr.getPricePolicy().getStudentDiscount());
+					break;
+				case 2:
+					PrintLine("Please enter the new discount for senior: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setSeniorDiscount(f);
+					PrintLine("Current discount for senior is: " + dataMgr.getPricePolicy().getSeniorDiscount());
+					break;
+				case 3:
+					PrintLine("Please enter the new increment for blockbuster: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setBlockbusterInc(f);
+					PrintLine("Current increment for blockbuster is: " + dataMgr.getPricePolicy().getBlockbusterInc());
+					break;
+				case 4:
+					PrintLine("Please enter the new increment for 3D: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setThreeDInc(f);
+					PrintLine("Current increment for 3D is: " + dataMgr.getPricePolicy().getThreeDInc());
+					break;
+				case 5:
+					PrintLine("Please enter the new increment for IMAX ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setiMAXInc(f);
+					PrintLine("Current increment for IMAX is: " + dataMgr.getPricePolicy().getiMAXInc());
+					break;
+				case 6:
+					PrintLine("Please enter the new increment for premiun: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setPremiumInc(f);
+					PrintLine("Current increment for premiun is: " + dataMgr.getPricePolicy().getPremiumInc());
+					break;
+				default:
+					break;
 			}
 		}
 	};
