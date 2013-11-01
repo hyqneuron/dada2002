@@ -72,6 +72,9 @@ public class DataSystem implements java.io.Serializable {
 	public Movie getMovie(int i){
 		return movies.get(i);
 	}
+	public void removeMovie(int id){
+		movies.remove(id);
+	}
 	public void addInvoice(Invoice invoice){
 		/// add invoice and associated tickets to system
 		invoice.setID(String.valueOf(invoiceID++));
