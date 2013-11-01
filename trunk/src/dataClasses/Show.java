@@ -24,6 +24,9 @@ public class Show implements java.io.Serializable{
 	public Cinema getCinema() {
 		return cinema;
 	}
+	public void setCinema(Cinema cinema){
+		this.cinema = cinema;
+	}
 	public PricePolicy.ShowType getShowType() {
 		return showType;
 	}
