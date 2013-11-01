@@ -5,8 +5,6 @@ import java.util.Date;
 import java.awt.List;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Calendar;
-import java.util.Scanner;
 
 
 public class ConsoleInterface {
@@ -145,6 +143,9 @@ public class ConsoleInterface {
 	// ask for user input, valid from min to max, otherwise ask to reenter
 	private int AskForChoice(int min, int max){
 		return AskForChoice(min, max, "Please enter your option: ");
+	}
+	private int AskForInt(int min, int max){
+		return AskForChoice(min, max, " ");
 	}
 	private int AskForChoice(int min, int max, String prompt)
 	{
@@ -371,7 +372,7 @@ public class ConsoleInterface {
 						new MenuOption("List Movies", 			menuListMovies),
 						new MenuOption("Edit Movies", 			menuEditMovies),
 						new MenuOption("Edit Shows", 			menuEditShows),
-						new MenuOption("Reveues", 				actionPrintRevenue),
+						new MenuOption("Reveues", 				menuRevenues),
 						new MenuOption("Change Pricing Policy", menuChangePricingPolicy),
 						new MenuOption("Book movie",			actionBookMovie),
 						new MenuOption("Leave", 				actionLeave)
@@ -643,12 +644,11 @@ public class ConsoleInterface {
 			ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
 			arr.add(new MenuOption("Creat a movie", actionCreateMovie));
 			arr.add(new MenuOption("Edit a movie",	actionEditMovie));
-			arr.add(new MenuOption("Delete a movie",  actionDeleteMovie));
 			arr.add(new MenuOption("Back",			actionBack));
 			MenuOption[] options = new MenuOption[arr.size()];
 			for(int i = 0; i<options.length; i++)
 				options[i] = arr.get(i);
-			Menu menu = new Menu("Listing", "Movie Listing Menu", options);
+			Menu menu = new Menu("Editing", "Movie Editing menu", options);
 			ShowMenu(menu);
 		}
 	};
@@ -658,6 +658,19 @@ public class ConsoleInterface {
 			
 		}
 	};
+
+	private MenuAction menuRevenues = new MenuAction(){
+		public void Show(Object o){
+			Menu menu = new Menu("Revenue Printing", "Revenue Menu", new MenuOption[]{
+					new MenuOption("Movie", actionPrintRevenue, 0),
+					new MenuOption("Cinema", actionPrintRevenue, 1),
+					new MenuOption("Day", actionPrintRevenue, 2),
+					new MenuOption("Month", actionPrintRevenue, 3),
+					new MenuOption("Back",actionBack)
+			});
+			ShowMenu(menu);
+		}
+	};
 	
 	private MenuAction actionBack = new MenuAction(){
 		public void Show(Object o){
@@ -665,11 +678,6 @@ public class ConsoleInterface {
 		}
 	};
 	//==============Edit Movies =============
-	private MenuAction editMovies = new MenuAction(){
-		public void Show(Object o)
-		{
-		}
-	};
 	
 	private MenuAction actionCreateMovie = new MenuAction(){
 		public void Show(Object o){
@@ -679,17 +687,22 @@ public class ConsoleInterface {
 			PrintLine("Please enter the description of the movie: ");
 			String description = AskForString();
 			PrintLine("Please enter the duration of the movie: ");
-			int duration = scanner.nextInt();
+			int duration = AskForInt(0, 100000);
 			PrintLine("Please enter the age limit of the movie: ");
-			int ageLimit = scanner.nextInt();
+			int ageLimit = AskForInt(0, 200);
 			PrintLine("Please enter the movie type of the movie: ");
 			String movieType = AskForString().toLowerCase();
+			while((movieType.compareTo("normal") != 0) && (movieType.compareTo("blockbuster")!= 0 )){
+				PrintLine("Please enter the movie type of the movie(normal or blockbuster): ");
+				movieType = AskForString().toLowerCase();
+			}
 			if(movieType == "normal")
 				movie = new Movie(name, description, duration, ageLimit, 
 						PricePolicy.MovieType.Normal, false);
 			else
 				movie = new Movie(name, description, duration, ageLimit,
 						PricePolicy.MovieType.Blockbuster, false);
+			
 			dataMgr.addMovie(movie);
 		}
 	};
@@ -697,18 +710,20 @@ public class ConsoleInterface {
 	private MenuAction actionEditMovie = new MenuAction(){
 		public void Show(Object o){
 			PrintLine("Please enter the id of the movie: ");
-			int id = scanner.nextInt();
+			int id = scanner.nextInt() - 1;
 			Movie movie = dataMgr.getMovie(id);
+			PrintMovie(movie);
 			ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
 			arr.add(new MenuOption("Change description", actionChangeMovieDescription, movie));
 			arr.add(new MenuOption("Change duration",	actionChangeMovieDuration, movie));
 			arr.add(new MenuOption("Change age limit",  actionChangeMovieAgeLimit, movie));
 			arr.add(new MenuOption("Change movie type", actionChangeMovieType, movie));
+			arr.add(new MenuOption("Change EndOfShow status: ", actionChangeEndOfShow, movie));
 			arr.add(new MenuOption("Back",			actionBack));
 			MenuOption[] options = new MenuOption[arr.size()];
 			for(int i = 0; i<options.length; i++)
 				options[i] = arr.get(i);
-			Menu menu = new Menu("Listing", "Movie Listing Menu", options);
+			Menu menu = new Menu("Editing", "Specific Movie Editing Menu", options);
 			ShowMenu(menu);
 		}
 	};
@@ -725,7 +740,7 @@ public class ConsoleInterface {
 	private MenuAction actionChangeMovieDuration = new MenuAction(){
 		public void Show(Object o){
 			PrintLine("Please enter the duration of the movie: ");
-			int duration = scanner.nextInt();
+			int duration = AskForInt(0, 100000);
 			((Movie)o).setDuration(duration);
 		}
 	};
@@ -733,7 +748,7 @@ public class ConsoleInterface {
 	private MenuAction actionChangeMovieAgeLimit = new MenuAction(){
 		public void Show(Object o){
 			PrintLine("Please enter the age limit of the movie: ");
-			int ageLimit = scanner.nextInt();
+			int ageLimit = AskForInt(0, 200);
 			((Movie)o).setAgeLimit(ageLimit);
 		}
 	};
@@ -749,15 +764,10 @@ public class ConsoleInterface {
 		}
 	};
 	
-	private MenuAction actionDeleteMovie = new MenuAction(){
+	private MenuAction actionChangeEndOfShow = new MenuAction(){
 		public void Show(Object o){
-			PrintLine("Please enter the id of the movie: ");
-			int id = scanner.nextInt();
-			Movie movie = dataMgr.getMovie(id);
-			if(movie == null)
-				PrintLine("The specified movie does not exist");
-			else
-				dataMgr.removeMovie(id);
+			if(((Movie)o).hasCurrentShow() == false)
+				((Movie)o).setEndOfShow(false);
 		}
 	};
 	
@@ -775,14 +785,6 @@ public class ConsoleInterface {
 				cal1 = AskForDate();
 				Print("Please enter the end date: ");
 				cal2 = AskForDate();
-			}
-			if (cal1==null)
-				Print("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
-			else if (cal2.compareTo(cal1)>=0)
-				Print("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
-			else
-				Print("Wrong input!!!");
-			
 		}
 	};
 	
