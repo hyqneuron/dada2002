@@ -11,6 +11,7 @@ public class Movie implements java.io.Serializable{
 	private int duration; // in minutes
 	private int ageLimit; // minimum age required to watch
 	private PricePolicy.MovieType movieType;
+	private String id;
 	
 	public Movie(String name, String description, int duration, int ageLimit, PricePolicy.MovieType movieType)
 	{
@@ -95,5 +96,12 @@ public class Movie implements java.io.Serializable{
 				current.add(this.getShow(i));
 		return current.toArray(new Show[0]);
 		
+	}
+
+	public String getID(){
+		return id;
+	}
+	public void setID(String id){
+		this.id = id;
 	}
 }
