@@ -200,6 +200,11 @@ public class DataSystem implements java.io.Serializable {
 		return null;
 	}
 	
+	public float calcRevenue(Movie movie, Cineplex cineplex, Date first, Date last)
+	{
+		return 0;
+	}
+	
 	// load from file and return the corresponding DataSystem object
 	public static DataSystem Load(String filename)
 	{
@@ -239,7 +244,7 @@ public class DataSystem implements java.io.Serializable {
 	public static DataSystem GetTestingDataSystem()
 	{
 		DataSystem d = new DataSystem();
-		// cineplex
+		//cineplex
 		Cineplex c1 = new Cineplex("Cineplex 1", "Street 81");
 		Cineplex c2 = new Cineplex("Cineplex 2", "Street 91");
 		Cineplex c3 = new Cineplex("Cineplex 3", "Street 101");

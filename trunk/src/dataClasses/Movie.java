@@ -11,6 +11,7 @@ public class Movie implements java.io.Serializable{
 	private int duration; // in minutes
 	private int ageLimit; // minimum age required to watch
 	private PricePolicy.MovieType movieType;
+	
 	public Movie(String name, String description, int duration, int ageLimit, PricePolicy.MovieType movieType)
 	{
 		this.shows = new ArrayList<Show>();

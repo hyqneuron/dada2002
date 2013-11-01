@@ -5,6 +5,7 @@ public class Cinema implements java.io.Serializable{
 	private SeatingPlan seatPlan;
 	private Cineplex cineplex;
 	private PricePolicy.CinemaType cinemaType;
+	
 	public Cinema(String name, PricePolicy.CinemaType cinemaType, SeatingPlan seatPlan, Cineplex cineplex){
 		this.name = name;
 		this.cinemaType = cinemaType;
