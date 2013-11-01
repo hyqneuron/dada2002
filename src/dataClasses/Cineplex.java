@@ -77,4 +77,12 @@ public class Cineplex  implements java.io.Serializable{
 		}
 		return movs.toArray(new Movie[0]);
 	}
+	public Cinema findCinemaWithName(String name){
+		for(int i = 0; i<cinemas.size(); i++)
+		{
+			if(cinemas.get(i).getName().compareToIgnoreCase(name)==0)
+				return cinemas.get(i);
+		}
+		return null;
+	}
 }
