@@ -17,6 +17,7 @@ public class DataSystem implements java.io.Serializable {
 	private ArrayList<Invoice> invoices;
 	private int invoiceID = 1; // starting ID for invoice
 	private ArrayList<Movie> movies;
+	private int movieID = 1;
 	private PricePolicy pricePolicy;
 	// seating plan not needed for explicit storage, managed by Cinema
 	// seating status not needed for explicit storage, managed by Show
@@ -62,6 +63,7 @@ public class DataSystem implements java.io.Serializable {
 		return customers.get(i);
 	}
 	public void addMovie(Movie movie){
+		movie.setID(String.valueOf(this.movieID++));
 		movies.add(movie);
 	}
 	public int getMovieCount(){

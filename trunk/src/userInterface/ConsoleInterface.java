@@ -165,8 +165,11 @@ public class ConsoleInterface {
 	}
 	private void PrintMovie(Movie movie)
 	{
-		Format("Name: %s%nDescription: %s%nDuration: %d minutes, Available showings: %d%n%n",
-				movie.getName(), movie.getDescription(), 
+		Format("Name: %s%n", movie.getName());
+		if(staffLogin!=null)
+			Format("ID: %s %n", movie.getID());
+		Format("Description: %s%nDuration: %d minutes, Available showings: %d%n%n",
+				movie.getDescription(), 
 				movie.getDuration(), movie.getShows().size());
 	}
 	private void PrintShow(Show show)
