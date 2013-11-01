@@ -634,6 +634,7 @@ public class ConsoleInterface {
 					new MenuOption("Change increment for 3D", actionChangePolicy, 4),
 					new MenuOption("Change increment for IMAX", actionChangePolicy, 5),
 					new MenuOption("Change increment for premium", actionChangePolicy, 6),
+					new MenuOption("Print current pricing policy", actionChangePolicy, 7),
 					new MenuOption("Back",actionBack)
 			});
 			ShowMenu(menu);
@@ -771,14 +772,16 @@ public class ConsoleInterface {
 			Date cal1 = null ,cal2 = null;
 			m = dataMgr.findMovieWithID(AskForString("Please enter the movie ID: (0: choose all the movie)"));
 			c = dataMgr.findCineplexWithName(AskForString("Please enter the cineplex name: (0: choose all the cineplex)"));
-			s = scanner.next();
-			if (s == "Y" || s == "y"){
+			s = AskForString("Do you want to check a certain period? (Y/N)");
+			if (s.toLowerCase().startsWith("y")){
 				Print("Please enter the starting date: ");
 				cal1 = userInput();
 				Print("Please enter the end date: ");
 				cal2 = userInput();
 			}
-			if (cal2.compareTo(cal1)>=0)
+			if (cal1==null)
+				Print("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
+			else if (cal2.compareTo(cal1)>=0)
 				Print("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
 			else
 				Print("Wrong input!!!");
@@ -831,6 +834,16 @@ public class ConsoleInterface {
 					PrintLine("Please enter the new increment for premiun: ");
 					f = scanner.nextFloat();
 					dataMgr.getPricePolicy().setPremiumInc(f);
+					PrintLine("Current increment for premiun is: " + dataMgr.getPricePolicy().getPremiumInc());
+					break;
+				case 7:
+					PrintLine("Current pricing police: ");
+					PrintLine("Current base price is: " + dataMgr.getPricePolicy().getBasePrice());
+					PrintLine("Current discount for student is: " + dataMgr.getPricePolicy().getStudentDiscount());
+					PrintLine("Current discount for senior is: " + dataMgr.getPricePolicy().getSeniorDiscount());
+					PrintLine("Current increment for blockbuster is: " + dataMgr.getPricePolicy().getBlockbusterInc());
+					PrintLine("Current increment for 3D is: " + dataMgr.getPricePolicy().getThreeDInc());
+					PrintLine("Current increment for IMAX is: " + dataMgr.getPricePolicy().getiMAXInc());
 					PrintLine("Current increment for premiun is: " + dataMgr.getPricePolicy().getPremiumInc());
 					break;
 				default:
