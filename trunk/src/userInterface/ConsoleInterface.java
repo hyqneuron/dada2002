@@ -5,6 +5,8 @@ import java.util.Date;
 import java.awt.List;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.Calendar;
+import java.util.Scanner;
 
 
 public class ConsoleInterface {
@@ -125,6 +127,24 @@ public class ConsoleInterface {
 	{
 		System.out.format(format, args);
 	}
+	private static Date userInput()
+    {
+        Scanner scan = new Scanner(System.in);
+        Calendar cal1 = Calendar.getInstance();
+        int month, day, year;
+         
+        System.out.println("Please enter a month MM: ");
+        month = scan.nextInt();
+        System.out.println("Please enter a day DD: ");
+        day = scan.nextInt();
+        System.out.println("Please enter a year YYYY: ");
+        year = scan.nextInt();
+        System.out.println("You chose: " + month + " " + day + " " + year);
+        cal1.set(year, month, day);
+        //long userTime = cal1.getTimeInMillis();
+        //System.out.println(userTime); //just to test to see if it will print the long value
+        return cal1.getTime();
+    }
 
 	// ask for user input, valid from min to max, otherwise ask to reenter
 	private int AskForChoice(int min, int max){
@@ -355,7 +375,7 @@ public class ConsoleInterface {
 						new MenuOption("List Movies", 			menuListMovies),
 						new MenuOption("Edit Movies", 			menuEditMovies),
 						new MenuOption("Edit Shows", 			menuEditShows),
-						new MenuOption("Reveues", 				menuRevenues),
+						new MenuOption("Reveues", 				actionPrintRevenue),
 						new MenuOption("Change Pricing Policy", menuChangePricingPolicy),
 						new MenuOption("Book movie",			actionBookMovie),
 						new MenuOption("Leave", 				actionLeave)
@@ -640,19 +660,6 @@ public class ConsoleInterface {
 			
 		}
 	};
-
-	private MenuAction menuRevenues = new MenuAction(){
-		public void Show(Object o){
-			Menu menu = new Menu("Revenue Printing", "Revenue Menu", new MenuOption[]{
-					new MenuOption("Movie", actionPrintRevenue, 0),
-					new MenuOption("Cinema", actionPrintRevenue, 1),
-					new MenuOption("Day", actionPrintRevenue, 2),
-					new MenuOption("Month", actionPrintRevenue, 3),
-					new MenuOption("Back",actionBack)
-			});
-			ShowMenu(menu);
-		}
-	};
 	
 	private MenuAction actionBack = new MenuAction(){
 		public void Show(Object o){
@@ -758,6 +765,24 @@ public class ConsoleInterface {
 	
 	private MenuAction actionPrintRevenue = new MenuAction(){
 		public void Show(Object o){
+			String s;
+			Movie m = null;
+			Cineplex c = null;
+			Date cal1 = null ,cal2 = null;
+			m = dataMgr.findMovieWithID(AskForString("Please enter the movie ID: (0: choose all the movie)"));
+			c = dataMgr.findCineplexWithName(AskForString("Please enter the cineplex name: (0: choose all the cineplex)"));
+			s = scanner.next();
+			if (s == "Y" || s == "y"){
+				Print("Please enter the starting date: ");
+				cal1 = userInput();
+				Print("Please enter the end date: ");
+				cal2 = userInput();
+			}
+			if (cal2.compareTo(cal1)>=0)
+				Print("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
+			else
+				Print("Wrong input!!!");
+			
 		}
 	};
 	
