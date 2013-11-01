@@ -252,7 +252,7 @@ public class DataSystem implements java.io.Serializable {
 					((getInvoice(i).getTime().compareTo(first) <= 0
 						|| last.compareTo(getInvoice(i).getTime()) <= 0)))
 				continue;
-			revenue += getInvoice(i).getTotalPrice();
+			revenue += getInvoice(i).getTotalPrice()/(1 + pricePolicy.getGST()/100);
 		}
 		return revenue;
 	}

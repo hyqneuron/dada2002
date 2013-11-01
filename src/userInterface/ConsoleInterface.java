@@ -634,7 +634,8 @@ public class ConsoleInterface {
 					new MenuOption("Change increment for 3D", actionChangePolicy, 4),
 					new MenuOption("Change increment for IMAX", actionChangePolicy, 5),
 					new MenuOption("Change increment for premium", actionChangePolicy, 6),
-					new MenuOption("Print current pricing policy", actionChangePolicy, 7),
+					new MenuOption("Change GST", actionChangePolicy, 7),
+					new MenuOption("Print current pricing policy", actionChangePolicy, 8),
 					new MenuOption("Back",actionBack)
 			});
 			ShowMenu(menu);
@@ -837,6 +838,12 @@ public class ConsoleInterface {
 					PrintLine("Current increment for premiun is: " + dataMgr.getPricePolicy().getPremiumInc());
 					break;
 				case 7:
+					PrintLine("Please enter the new GST: ");
+					f = scanner.nextFloat();
+					dataMgr.getPricePolicy().setGST(f);
+					PrintLine("Current GST is: " + dataMgr.getPricePolicy().getGST());
+					break;
+				case 8:
 					PrintLine("Current pricing police: ");
 					PrintLine("Current base price is: " + dataMgr.getPricePolicy().getBasePrice());
 					PrintLine("Current discount for student is: " + dataMgr.getPricePolicy().getStudentDiscount());
@@ -845,6 +852,7 @@ public class ConsoleInterface {
 					PrintLine("Current increment for 3D is: " + dataMgr.getPricePolicy().getThreeDInc());
 					PrintLine("Current increment for IMAX is: " + dataMgr.getPricePolicy().getiMAXInc());
 					PrintLine("Current increment for premiun is: " + dataMgr.getPricePolicy().getPremiumInc());
+					PrintLine("Current GST is: " + dataMgr.getPricePolicy().getGST());
 					break;
 				default:
 					break;
