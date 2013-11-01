@@ -8,6 +8,7 @@ public class Cineplex  implements java.io.Serializable{
 	private ArrayList<Cinema> cinemas;
 	private ArrayList<Show> currentShows;
 	private ArrayList<Movie> currentMovies;
+	
 	public Cineplex(String Name, String Location)
 	{
 		cinemas = new ArrayList<Cinema>();
