@@ -13,6 +13,7 @@ public class PricePolicy  implements java.io.Serializable{
 	private float threeDInc = 2; // extra amount for 3D
 	private float iMAXInc = 8; // extra amount for IMAX
 	private float premiumInc = 10; // extra amount for premium cinema 
+	private float gst = 7;//by %
 	
 	
 	public CustomerType getCustomerType(int age)
@@ -93,5 +94,11 @@ public class PricePolicy  implements java.io.Serializable{
 	}
 	public void setPremiumInc(float premiumInc) {
 		this.premiumInc = premiumInc;
+	}
+	public float getGST() {
+		return gst;
+	}
+	public void setGST(float gst) {
+		this.gst = gst;
 	}
 }
