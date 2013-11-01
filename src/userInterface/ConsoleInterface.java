@@ -127,22 +127,18 @@ public class ConsoleInterface {
 	{
 		System.out.format(format, args);
 	}
-	private static Date userInput()
+	private Date AskForDate()
     {
         Scanner scan = new Scanner(System.in);
         Calendar cal1 = Calendar.getInstance();
         int month, day, year;
          
-        System.out.println("Please enter a month MM: ");
-        month = scan.nextInt();
-        System.out.println("Please enter a day DD: ");
-        day = scan.nextInt();
-        System.out.println("Please enter a year YYYY: ");
-        year = scan.nextInt();
+        day = AskForChoice(1,31,"Please enter a month MM: ");
+        month = AskForChoice(1,12,"Please enter a month MM: ");
+        year = AskForChoice(2000,2020,"Please enter a month MM: ");
+        
         System.out.println("You chose: " + month + " " + day + " " + year);
         cal1.set(year, month, day);
-        //long userTime = cal1.getTimeInMillis();
-        //System.out.println(userTime); //just to test to see if it will print the long value
         return cal1.getTime();
     }
 
@@ -776,9 +772,9 @@ public class ConsoleInterface {
 			s = AskForString("Do you want to check a certain period? (Y/N)");
 			if (s.toLowerCase().startsWith("y")){
 				Print("Please enter the starting date: ");
-				cal1 = userInput();
+				cal1 = AskForDate();
 				Print("Please enter the end date: ");
-				cal2 = userInput();
+				cal2 = AskForDate();
 			}
 			if (cal1==null)
 				Print("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
