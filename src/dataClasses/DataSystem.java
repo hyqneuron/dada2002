@@ -167,6 +167,16 @@ public class DataSystem implements java.io.Serializable {
 		return movs.toArray(new Movie[0]);
 	}
 	
+	public Movie findMovieWithID(String id)
+	{
+		for(int i = 0; i<this.getMovieCount(); i++)
+		{
+			Movie m = this.getMovie(i);
+			if(m.getID().compareTo(id)==0)
+				return m;
+		}
+		return null;
+	}
 	public Customer findCustomerWithUsername(String username)
 	{
 		for(int i = 0; i<this.getCustomerCount(); i++)
