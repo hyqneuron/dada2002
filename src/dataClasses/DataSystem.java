@@ -155,6 +155,17 @@ public class DataSystem implements java.io.Serializable {
 		}
 		return curMovs.toArray(new Movie[0]);
 	}
+	public Movie[] getAllNonEndMovies()
+	{
+		ArrayList<Movie> curMovs = new ArrayList<Movie>();
+		for(int i = 0; i<this.getMovieCount(); i++)
+		{
+			Movie m = this.getMovie(i);
+			if(m.getEndOfShow()==false)
+				curMovs.add(m);
+		}
+		return curMovs.toArray(new Movie[0]);
+	}
 	public Movie[] findMoviesWithName(String name)
 	{
 		ArrayList<Movie> movs = new ArrayList<Movie>();
