@@ -12,8 +12,10 @@ public class Movie implements java.io.Serializable{
 	private int ageLimit; // minimum age required to watch
 	private PricePolicy.MovieType movieType;
 	private String id;
+	private boolean endOfShow;
 	
-	public Movie(String name, String description, int duration, int ageLimit, PricePolicy.MovieType movieType)
+	public Movie(String name, String description, int duration, int ageLimit, 
+			PricePolicy.MovieType movieType, boolean endOfShow)
 	{
 		this.shows = new ArrayList<Show>();
 		this.name = name;
@@ -21,6 +23,7 @@ public class Movie implements java.io.Serializable{
 		this.duration = duration;
 		this.ageLimit = ageLimit;
 		this.movieType = movieType;
+		this.endOfShow = endOfShow;
 	}
 	public void addShow(Show show){
 		shows.add(show);
@@ -68,6 +71,19 @@ public class Movie implements java.io.Serializable{
 	public void setMovieType(PricePolicy.MovieType movieType) {
 		this.movieType = movieType;
 	}
+
+	public String getID(){
+		return id;
+	}
+	public void setID(String id){
+		this.id = id;
+	}
+	public boolean getEndOfShow(){
+		return endOfShow;
+	}
+	public void setEndOfShow(boolean endOfShow){
+		this.endOfShow = endOfShow;
+	}
 	public Show[] getCurrentShows(){
 		ArrayList<Show> current = new ArrayList<Show>();
 		for(int i = 0; i<this.getShowCount(); i++)
@@ -98,10 +114,4 @@ public class Movie implements java.io.Serializable{
 		
 	}
 
-	public String getID(){
-		return id;
-	}
-	public void setID(String id){
-		this.id = id;
-	}
 }

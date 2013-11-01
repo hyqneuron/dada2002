@@ -309,9 +309,9 @@ public class DataSystem implements java.io.Serializable {
 		d.addCinema(cm3_3);
 		
 		// movie
-		Movie kingkong = new Movie("King Kong", "a good movie", 120, 15, PricePolicy.MovieType.Blockbuster);
-		Movie leon = new Movie("Leon", "the professional", 100, 0, PricePolicy.MovieType.Normal);
-		Movie gravity = new Movie("Gravity", "yes, Earth is heavy", 140, 0, PricePolicy.MovieType.Blockbuster);
+		Movie kingkong = new Movie("King Kong", "a good movie", 120, 15, PricePolicy.MovieType.Blockbuster, false);
+		Movie leon = new Movie("Leon", "the professional", 100, 0, PricePolicy.MovieType.Normal, false);
+		Movie gravity = new Movie("Gravity", "yes, Earth is heavy", 140, 0, PricePolicy.MovieType.Blockbuster, false);
 		d.addMovie(kingkong);
 		d.addMovie(leon);
 		d.addMovie(gravity);
