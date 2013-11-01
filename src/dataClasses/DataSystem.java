@@ -238,22 +238,23 @@ public class DataSystem implements java.io.Serializable {
 	}
 	
 	public float calcRevenue(Movie movie, Cineplex cineplex, Date first, Date last){
-		double revenue = 0;
+		float  revenue = 0;
 		for(int i = 0; i<this.getInvoiceCount(); i++)
 		{
 			// confirm movie
 			if(movie!=null && this.getInvoice(i).getTickets()[0].getShow().getMovie()!= movie)
 				continue;
-			if(cineplex!=null && this.getInvoice(i).getTickets()[0].getShow().getCinema().getCineplex()!=cineplex)
-				continue;
 			// confirm cieplex
 			if(cineplex!=null && this.getInvoice(i).getTickets()[0].getShow().getCinema().getCineplex()!=cineplex)
 				continue;
 			// confirm time
-			if(first!=null && last!=null && getInvoice(i).getTime().compareTo(first) >=0 && last.compareTo(getInvoice(i).getTime())>=0)
-				revenue += getInvoice(i).getTotalPrice();
+			if((first!=null && last!=null) && 
+					((getInvoice(i).getTime().compareTo(first) <= 0
+						|| last.compareTo(getInvoice(i).getTime()) <= 0)))
+				continue;
+			revenue += getInvoice(i).getTotalPrice();
 		}
-		return 0;
+		return revenue;
 	}
 	
 	// load from file and return the corresponding DataSystem object
