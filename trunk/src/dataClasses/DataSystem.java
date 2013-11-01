@@ -177,6 +177,17 @@ public class DataSystem implements java.io.Serializable {
 		}
 		return null;
 	}
+
+	public Cineplex findCineplexWithName(String name)
+	{
+		for(int i = 0; i<this.getCineplexCount(); i++)
+		{
+			Cineplex c = this.getCineplex(i);
+			if(c.getName().compareTo(name)==0)
+				return c;
+		}
+		return null;
+	}
 	public Customer findCustomerWithUsername(String username)
 	{
 		for(int i = 0; i<this.getCustomerCount(); i++)
