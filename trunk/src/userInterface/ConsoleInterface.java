@@ -369,7 +369,10 @@ public class ConsoleInterface {
 	public void Show(Object o)
 	{
 		ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
-		arr.add(new MenuOption("List all currently showing movies",	actionListCurrentMovies));
+		if(staffLogin!=null)
+			arr.add(new MenuOption("List all non-end-of-show movies",	actionListNonEndMovies));
+		else 
+			arr.add(new MenuOption("List all currently showing movies",	actionListCurrentMovies));
 		arr.add(new MenuOption("List a specific movie", 			actionListSpecificMovie));
 		// add entries for each cineplex
 		for(int i = 0; i<dataMgr.getCineplexCount(); i++)
@@ -384,6 +387,16 @@ public class ConsoleInterface {
 		ShowMenu(menu);
 	}};
 
+	private MenuAction actionListNonEndMovies = new MenuAction(){
+		public void Show(Object o)
+		{
+			Cineplex cineplex = (Cineplex)o;
+			Movie[] all = dataMgr.getAllNonEndMovies();
+			// print them all
+			for(int i = 0; i<all.length; i++)
+				PrintMovie(all[i]);
+		}
+	};
 	private MenuAction actionListCurrentMovies = new MenuAction(){
 		public void Show(Object o)
 		{
