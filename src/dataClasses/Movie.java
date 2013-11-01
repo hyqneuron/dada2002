@@ -113,5 +113,12 @@ public class Movie implements java.io.Serializable{
 		return current.toArray(new Show[0]);
 		
 	}
+	public boolean hasSales(DataSystem d){
+		for(int i = 0; i<d.getInvoiceCount(); i++){
+			if(d.getInvoice(i).getTickets()[0].getShow().getMovie()==this)
+				return true;
+		}
+		return false;
+	}
 
 }

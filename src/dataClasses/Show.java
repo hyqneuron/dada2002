@@ -48,4 +48,12 @@ public class Show implements java.io.Serializable{
 	public Boolean isCurrent(){
 		return this.time.after(GregorianCalendar.getInstance().getTime());
 	}
+
+	public boolean hasSales(DataSystem d){
+		for(int i = 0; i<d.getInvoiceCount(); i++){
+			if(d.getInvoice(i).getTickets()[0].getShow()==this)
+				return true;
+		}
+		return false;
+	}
 }
