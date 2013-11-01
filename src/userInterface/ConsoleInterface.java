@@ -4,6 +4,7 @@ import dataClasses.*;
 import java.util.Date;
 import java.awt.List;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Stack;
 
 
@@ -127,7 +128,6 @@ public class ConsoleInterface {
 	}
 	private Date AskForDate()
     {
-        Scanner scan = new Scanner(System.in);
         Calendar cal1 = Calendar.getInstance();
         int month, day, year;
          
@@ -139,6 +139,27 @@ public class ConsoleInterface {
         cal1.set(year, month, day);
         return cal1.getTime();
     }
+	private Date AskForTime()
+	{
+        Calendar cal1 = Calendar.getInstance();
+        int month, day, year, hour, minute;
+         
+        month = AskForChoice(1,12,"Please enter a month MM: ");
+        day   = AskForChoice(1,31,"Please enter a day  DD: ");
+        year   = AskForChoice(2000,2020,"Please enter a year YYYY: ");
+        hour   = AskForChoice(0,23,"Please enter hour: ");
+        minute   = AskForChoice(0,59,"Please enter minute: ");
+        //System.out.println("Please enter a day DD: ");
+        //day = scan.nextInt();
+        //System.out.println("Please enter a year YYYY: ");
+        //year = scan.nextInt();
+        //System.out.println("You chose: " + month + " " + day + " " + year);
+        //cal1.set(year, month, day);
+        cal1.set(year, month, day, hour, minute);
+        //long userTime = cal1.getTimeInMillis();
+        //System.out.println(userTime); //just to test to see if it will print the long value
+        return cal1.getTime();
+	}
 
 	// ask for user input, valid from min to max, otherwise ask to reenter
 	private int AskForChoice(int min, int max){
@@ -655,9 +676,116 @@ public class ConsoleInterface {
 
 	private MenuAction menuEditShows= new MenuAction(){
 		public void Show(Object o){
+			Menu menu = new Menu("Staff Menu", "EditShows", new MenuOption[]{
+					new MenuOption("Edit", actionEditShow, 0),
+					new MenuOption("Add", actionAddShow, 1),
+					new MenuOption("Delete",actionChangeEndOfShow, 2),
+					new MenuOption("Back",actionBack)
+			});
+			ShowMenu(menu);
+		}
+	};
+	private MenuAction actionEditShow= new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Input the Show ID:");
+			String showID = AskForString();
+			Show show = dataMgr.findShowWithID (showID);
+			int choice = 0;
+			do{
+				PrintLine("Select the part you want to edit:");
+				PrintLine("1. Cinema:");
+				PrintLine("2. Time:");
+				PrintLine("3. Show Type:");
+				PrintLine("4. Back");
+				choice = AskForChoice(1,4);
+				switch (choice){
+				case 1:
+					if (show.hasSales(dataMgr))
+						PrintLine("Can not change the Cinema now.");
+					else{
+						PrintLine("Input the Cineplex:");
+						String cineplexName = AskForString();
+						Cineplex cineplex = dataMgr.findCineplexWithName(cineplexName);
+						PrintLine("Input new ciname:");
+						String cinemaName = AskForString();
+						Cinema cinema = cineplex.findCinemaWithName(cinemaName);
+						show.setCinema(cinema);
+						PrintLine("Edit sucessfully!");
+						}
+					break;
+				case 2:
+					if (show.hasSales(dataMgr))
+						PrintLine("Can not change the Show Time now.");
+					else{
+						AskForTime();
+					}
+					break;
+				case 3:
+					break;
+				case 4:
+					LeaveSubMenu();
+					break;
+				}
+			}while (choice < 4);
+			
 			
 		}
 	};
+	/* 
+	private Movie movie;
+	private Cinema cinema;
+	private SeatingStatus seatStatus;
+	private PricePolicy.ShowType showType;
+	private Date time;
+	private String id;*/
+	private MenuAction actionAddShow = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Input the Movie ID:");
+			String movieID = AskForString();
+			Movie movie = dataMgr.findMovieWithID(movieID);
+			PrintLine("Input the Cineplex:");
+			String cineplexName = AskForString();
+			Cineplex cineplex = dataMgr.findCineplexWithName(cineplexName);
+			PrintLine("Input new ciname:");
+			String cinemaName = AskForString();
+			Cinema cinema = cineplex.findCinemaWithName(cinemaName);
+			String type = AskForString("Input the showType (2D, 3D, or IMAX):");
+			PricePolicy.ShowType showType;
+			while(true){
+				if(type.compareToIgnoreCase("2D")==0)
+					showType=PricePolicy.ShowType.TwoD;
+				else if(type.compareToIgnoreCase("3D")==0)
+					showType=PricePolicy.ShowType.ThreeD;
+				else if(type.compareToIgnoreCase("IMAX")==0)
+					showType=PricePolicy.ShowType.IMAX;
+				else{
+					type=AskForString("Invalid type. Please re-enter (2D, 3D, or IMAX):");
+					continue;
+				}
+				break;
+			}
+			
+			
+			PrintLine("Input the Show ID:");
+			//String showID = AskForString();
+			Show show = new Show (movie,cinema,showType,AskForTime());
+			dataMgr.addShow(show);
+			PrintLine("Add Succesfully!");
+			
+		}
+	};
+/*
+	private MenuAction actionDeleteShow= new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Input the Show ID:");
+			String showID = AskForString();
+			Show show = dataMgr.findShowWithID(showID);
+			Movie movie = show.getMovie();
+			movie.removeShow(show);
+			PrintLine("Delete Sucessfully!");
+		}
+	};
+*/
 
 	private MenuAction menuRevenues = new MenuAction(){
 		public void Show(Object o){
@@ -785,6 +913,7 @@ public class ConsoleInterface {
 				cal1 = AskForDate();
 				Print("Please enter the end date: ");
 				cal2 = AskForDate();
+			}
 		}
 	};
 	
@@ -854,7 +983,7 @@ public class ConsoleInterface {
 					break;
 				default:
 					break;
-			}
+			};
 		}
 	};
 
