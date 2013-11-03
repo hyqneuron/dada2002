@@ -74,16 +74,30 @@ public class ConsoleInterface {
 	{
 		public void Show(Object o);
 	}
+	private interface MenuPriorAction
+	{
+		public void Show(Object o);
+	}
 	private class Menu
 	{
 		public String name;  // e.g. "Home"
 		public String title; // e.g. "Customer Main Menu"
 		public MenuOption[] options;
+		public MenuPriorAction priorAction;
+		public Object priorParam;
 		public Menu(String name, String title, MenuOption[] options)
 		{
 			this.name = name;
 			this.title = title;
 			this.options = options;
+		}
+		public Menu(String name, String title, MenuOption[] options, MenuPriorAction priorAction, Object o)
+		{
+			this.name = name;
+			this.title = title;
+			this.options = options;
+			this.priorAction = priorAction;
+			this.priorParam = o;
 		}	
 	}
 	
@@ -155,13 +169,11 @@ public class ConsoleInterface {
         return cal1.getTime();
 	}
 
-	// ask for user input, valid from min to max, otherwise ask to reenter
+	
 	private int AskForChoice(int min, int max){
-		return AskForChoice(min, max, "Please enter your option: ");
+		return AskForChoice(min, max, "");
 	}
-	private int AskForInt(int min, int max){
-		return AskForChoice(min, max, " ");
-	}
+	// ask for user input, valid from min to max, otherwise ask to reenter
 	private int AskForChoice(int min, int max, String prompt)
 	{
 		int result=min-1;
@@ -171,7 +183,7 @@ public class ConsoleInterface {
 			Print(prompt);
 			input = scanner.nextLine();
 			// first time we print prompt passed in, second time and on we print error msg below
-			prompt = "Invalid choice. Please re-enter: ";
+			prompt = "Invalid number. Please re-enter: ";
 			try	{
 				result = Integer.parseInt(input);
 			}
@@ -287,6 +299,9 @@ public class ConsoleInterface {
 			// print title
 			if(title!=null)
 				PrintLine(title);
+			// if menu has a priorAction, execute it first
+			if(menu.priorAction!=null)
+				menu.priorAction.Show(menu.priorParam);
 			// print the options
 			for(int i = 0; i<options.length; i++)
 			{
@@ -690,19 +705,13 @@ public class ConsoleInterface {
 	private MenuAction actionCreateMovie = new MenuAction(){
 		public void Show(Object o){
 			Movie movie;
-			PrintLine("Please enter the name of the movie: ");
-			String name = AskForString();
-			PrintLine("Please enter the description of the movie: ");
-			String description = AskForString();
-			PrintLine("Please enter the duration of the movie: ");
-			int duration = AskForInt(0, 100000);
-			PrintLine("Please enter the age limit of the movie: ");
-			int ageLimit = AskForInt(0, 200);
-			PrintLine("Please enter the movie type of the movie: ");
-			String movieType = AskForString().toLowerCase();
+			String name = AskForString("Please enter the name of the movie: ");
+			String description = AskForString("Please enter the description of the movie: ");
+			int duration = AskForChoice(0, 100000, "Please enter the duration of the movie: ");
+			int ageLimit = AskForChoice(0, 200, "Please enter the age limit of the movie: ");
+			String movieType = AskForString("Please enter the movie type of the movie: ").toLowerCase();
 			while((movieType.compareTo("normal") != 0) && (movieType.compareTo("blockbuster")!= 0 )){
-				PrintLine("Please enter the movie type of the movie(normal or blockbuster): ");
-				movieType = AskForString().toLowerCase();
+				movieType = AskForString("Please enter the movie type of the movie(normal or blockbuster): ").toLowerCase();
 			}
 			if(movieType == "normal")
 				movie = new Movie(name, description, duration, ageLimit, 
@@ -712,15 +721,19 @@ public class ConsoleInterface {
 						PricePolicy.MovieType.Blockbuster, false);
 			
 			dataMgr.addMovie(movie);
+			PrintMovie(movie);
 		}
 	};
 	
 	private MenuAction actionEditMovie = new MenuAction(){
 		public void Show(Object o){
-			PrintLine("Please enter the id of the movie: ");
-			int id = scanner.nextInt() - 1;
-			Movie movie = dataMgr.getMovie(id);
-			PrintMovie(movie);
+			String id = AskForString("Please enter the id of the movie: ");
+			Movie movie = dataMgr.findMovieWithID(id);
+			if(movie==null)
+			{
+				PrintLine("Invalid ID given.");
+				return;
+			}
 			ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
 			arr.add(new MenuOption("Change description", actionChangeMovieDescription, movie));
 			arr.add(new MenuOption("Change duration",	actionChangeMovieDuration, movie));
@@ -731,7 +744,13 @@ public class ConsoleInterface {
 			MenuOption[] options = new MenuOption[arr.size()];
 			for(int i = 0; i<options.length; i++)
 				options[i] = arr.get(i);
-			Menu menu = new Menu("Editing", "Specific Movie Editing Menu", options);
+			// movie will be printed before the options above are shown
+			MenuPriorAction priorEditMovie = new MenuPriorAction(){
+				public void Show(Object o){
+					PrintMovie((Movie)o);
+				}
+			};
+			Menu menu = new Menu("Editing", "Specific Movie Editing Menu", options, priorEditMovie, movie);
 			ShowMenu(menu);
 		}
 	};
@@ -748,7 +767,7 @@ public class ConsoleInterface {
 	private MenuAction actionChangeMovieDuration = new MenuAction(){
 		public void Show(Object o){
 			PrintLine("Please enter the duration of the movie: ");
-			int duration = AskForInt(0, 100000);
+			int duration = AskForChoice(0, 100000);
 			((Movie)o).setDuration(duration);
 		}
 	};
@@ -756,7 +775,7 @@ public class ConsoleInterface {
 	private MenuAction actionChangeMovieAgeLimit = new MenuAction(){
 		public void Show(Object o){
 			PrintLine("Please enter the age limit of the movie: ");
-			int ageLimit = AskForInt(0, 200);
+			int ageLimit = AskForChoice(0, 200);
 			((Movie)o).setAgeLimit(ageLimit);
 		}
 	};
