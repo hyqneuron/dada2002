@@ -89,6 +89,8 @@ public class ConsoleInterface {
 	
 	
 	
+	//===========entry point and constructor=========================
+	
 	public ConsoleInterface(DataSystem d)
 	{
 		this.dataMgr = d;
@@ -111,7 +113,7 @@ public class ConsoleInterface {
 	// fixed scanner for input
 	java.util.Scanner scanner;
 	
-	//===================convenience functions=====================
+	//===================convenience functions for input/output=====================
 	// short hand to println
 	private static void PrintLine(String s)
 	{
@@ -149,15 +151,7 @@ public class ConsoleInterface {
         year   = AskForChoice(2000,2020,"Please enter a year YYYY: ");
         hour   = AskForChoice(0,23,"Please enter hour: ");
         minute   = AskForChoice(0,59,"Please enter minute: ");
-        //System.out.println("Please enter a day DD: ");
-        //day = scan.nextInt();
-        //System.out.println("Please enter a year YYYY: ");
-        //year = scan.nextInt();
-        //System.out.println("You chose: " + month + " " + day + " " + year);
-        //cal1.set(year, month, day);
         cal1.set(year, month, day, hour, minute);
-        //long userTime = cal1.getTimeInMillis();
-        //System.out.println(userTime); //just to test to see if it will print the long value
         return cal1.getTime();
 	}
 
@@ -201,6 +195,9 @@ public class ConsoleInterface {
 		}
 		return result;
 	}
+	
+	
+	// =========================== printing data objects ========================
 	private void PrintMovie(Movie movie)
 	{
 		Format("Name: %s%n", movie.getName());
@@ -254,6 +251,7 @@ public class ConsoleInterface {
 		PrintLine("=========Invoice ends===========");
 	}
 	
+	// ==========================MENU  ====================================
 	// We use this method to show a list of options
 	// Each option is a string array of length 2 to 3, with third element optional
 	// ["String to show in menu","name of function to call when chosen"]
@@ -262,10 +260,15 @@ public class ConsoleInterface {
 	{
 		menuStack.push(menu);
 	}
+	private void ClearMenu()
+	{
+		menuStack.clear();
+	}
 	private void LeaveSubMenu()
 	{
 		menuStack.pop();
 	}
+	// print a menu and ask user for choice
 	private void DoMenu()
 	{
 		while(menuStack.size()!=0)
@@ -296,6 +299,22 @@ public class ConsoleInterface {
 		}
 	}
 	
+
+
+	//=================Miscellaneous menu function==================
+	private MenuAction actionBack = new MenuAction(){
+		public void Show(Object o){
+			LeaveSubMenu();
+		}
+	};
+	private MenuAction actionLeave = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Have a nice day!");
+			ClearMenu();
+			return;
+		}
+	};
+	
 	
 	//=================login     ==================
 	
@@ -307,6 +326,7 @@ public class ConsoleInterface {
 	private Staff staffLogin;
 	
 	// ask if user wants to login
+	// used as the entry point of ConsoleInterface
 	private MenuAction menuLogin = new MenuAction(){
 	public void Show(Object o)
 	{
@@ -319,6 +339,15 @@ public class ConsoleInterface {
 	}};
 
 
+	private MenuAction actionLogout = new MenuAction(){
+		public void Show(Object o){
+			customerLogin = null;
+			staffLogin = null;
+			loginType = LoginType.None;
+			ClearMenu();
+			menuLogin.Show(null);
+		}
+	};
 
 	private MenuAction actionLogin = new MenuAction(){
 	public void Show(Object o)
@@ -362,7 +391,7 @@ public class ConsoleInterface {
 			loginType = LoginType.Staff;
 		}
 		// login passed, show another main menu
-		LeaveSubMenu();
+		//LeaveSubMenu();
 		menuMain.Show(null);
 		
 	}};
@@ -376,27 +405,30 @@ public class ConsoleInterface {
 						new MenuOption("List Movies", 			menuListMovies),
 						new MenuOption("Book Movie", 			actionBookMovie),
 						new MenuOption("Check Booking Status", 	actionCheckBooking),
-						new MenuOption("Check Booking History",	actionCheckHistory),
-						new MenuOption("Leave", 				actionLeave)
+						new MenuOption("Check Account History",	actionCheckHistory),
+						new MenuOption("Log out", 				actionLogout),
+						new MenuOption("Exit system", 			actionLeave)
 					});
 			else if(loginType==LoginType.None)
 				menu = new Menu("Home", "Guest Main Menu", new MenuOption[]{
 						new MenuOption("List Movies", 			menuListMovies),
 						new MenuOption("Book Movie", 			actionBookMovie),
-						new MenuOption("Register Account", 		actionRegisterCustomer),
-						new MenuOption("Log in", 				actionLogin, true),
 						new MenuOption("Check Booking Status", 	actionCheckBooking),
-						new MenuOption("Leave", 				actionLeave)
+						new MenuOption("Register Account", 		actionRegisterCustomer),
+						// actionLogout will exit to login menu, so it is used for log in option
+						new MenuOption("Log in", 				actionLogout, true),
+						new MenuOption("Exit System", 			actionLeave)
 					});
 			else // staff
 				menu = new Menu("Home", "Staff Main Menu", new MenuOption[]{
 						new MenuOption("List Movies", 			menuListMovies),
-						new MenuOption("Edit Movies", 			menuEditMovies),
-						new MenuOption("Edit Shows", 			menuEditShows),
-						new MenuOption("Reveues", 				menuRevenues),
-						new MenuOption("Change Pricing Policy", menuChangePricingPolicy),
 						new MenuOption("Book movie",			actionBookMovie),
-						new MenuOption("Leave", 				actionLeave)
+						new MenuOption("Add/Edit Movies", 		menuEditMovies),
+						new MenuOption("Add/Edit Shows", 		menuEditShows),
+						new MenuOption("Query Reveues", 		actionPrintRevenue),
+						new MenuOption("Change Pricing Policy", menuChangePricingPolicy),
+						new MenuOption("Log out", 				actionLogout),
+						new MenuOption("Exit system", 			actionLeave)
 				});
 			ShowMenu(menu);
 		}
@@ -428,7 +460,6 @@ public class ConsoleInterface {
 	private MenuAction actionListNonEndMovies = new MenuAction(){
 		public void Show(Object o)
 		{
-			Cineplex cineplex = (Cineplex)o;
 			Movie[] all = dataMgr.getAllNonEndMovies();
 			// print them all
 			for(int i = 0; i<all.length; i++)
@@ -591,7 +622,7 @@ public class ConsoleInterface {
 		
 	}};
 	
-	// 3. check booking status
+	//====================check booking status===========================
 	private MenuAction actionCheckBooking = new MenuAction(){
 		public void Show(Object o)
 		{
@@ -605,7 +636,7 @@ public class ConsoleInterface {
 			PrintInvoice(invoice);
 		}
 	};
-	// 4. Register customer
+	// =============================Register customer==================
 	private MenuAction actionRegisterCustomer = new MenuAction(){
 	public void Show(Object o)
 	{
@@ -621,7 +652,7 @@ public class ConsoleInterface {
 		dataMgr.addCustomer(cus);
 		PrintLine("Registration successful");
 	}};
-	// 6. Check history
+	// ============== Check booking history ===============================
 	private MenuAction actionCheckHistory = new MenuAction(){
 		public void Show(Object o)
 		{
@@ -633,33 +664,16 @@ public class ConsoleInterface {
 				PrintInvoice(invoices[i]);
 		}
 	};
-	// 7. leave
-	private MenuAction actionLeave = new MenuAction(){
-		public void Show(Object o){
-			PrintLine("Have a nice day!");
-			menuStack.clear();
-			return;
-		}
-	};
-	//8. Change pricing policy
-	private MenuAction menuChangePricingPolicy = new MenuAction(){
-		public void Show(Object o){
-			Menu menu = new Menu("Price Policy", "Price Policy Menu", new MenuOption[]{
-					new MenuOption("Change base price", actionChangePolicy, 0),
-					new MenuOption("Change student discount", actionChangePolicy, 1),
-					new MenuOption("Change senior discount", actionChangePolicy, 2),
-					new MenuOption("Change increment for blockbuster", actionChangePolicy, 3),
-					new MenuOption("Change increment for 3D", actionChangePolicy, 4),
-					new MenuOption("Change increment for IMAX", actionChangePolicy, 5),
-					new MenuOption("Change increment for premium", actionChangePolicy, 6),
-					new MenuOption("Change GST", actionChangePolicy, 7),
-					new MenuOption("Print current pricing policy", actionChangePolicy, 8),
-					new MenuOption("Back",actionBack)
-			});
-			ShowMenu(menu);
-		}
-	};
+	
+	
+	
 
+	//============================================================
+	// Staff-only section starts here
+	//============================================================
+
+
+	// ================= Add/Edit Movies =========================
 	private MenuAction menuEditMovies = new MenuAction(){
 		public void Show(Object o){
 			ArrayList<MenuOption> arr = new ArrayList<MenuOption>();
@@ -673,140 +687,6 @@ public class ConsoleInterface {
 			ShowMenu(menu);
 		}
 	};
-
-	private MenuAction menuEditShows= new MenuAction(){
-		public void Show(Object o){
-			Menu menu = new Menu("Staff Menu", "EditShows", new MenuOption[]{
-					new MenuOption("Edit", actionEditShow, 0),
-					new MenuOption("Add", actionAddShow, 1),
-					new MenuOption("Delete",actionChangeEndOfShow, 2),
-					new MenuOption("Back",actionBack)
-			});
-			ShowMenu(menu);
-		}
-	};
-	private MenuAction actionEditShow= new MenuAction(){
-		public void Show(Object o){
-			PrintLine("Input the Show ID:");
-			String showID = AskForString();
-			Show show = dataMgr.findShowWithID (showID);
-			int choice = 0;
-			do{
-				PrintLine("Select the part you want to edit:");
-				PrintLine("1. Cinema:");
-				PrintLine("2. Time:");
-				PrintLine("3. Show Type:");
-				PrintLine("4. Back");
-				choice = AskForChoice(1,4);
-				switch (choice){
-				case 1:
-					if (show.hasSales(dataMgr))
-						PrintLine("Can not change the Cinema now.");
-					else{
-						PrintLine("Input the Cineplex:");
-						String cineplexName = AskForString();
-						Cineplex cineplex = dataMgr.findCineplexWithName(cineplexName);
-						PrintLine("Input new ciname:");
-						String cinemaName = AskForString();
-						Cinema cinema = cineplex.findCinemaWithName(cinemaName);
-						show.setCinema(cinema);
-						PrintLine("Edit sucessfully!");
-						}
-					break;
-				case 2:
-					if (show.hasSales(dataMgr))
-						PrintLine("Can not change the Show Time now.");
-					else{
-						AskForTime();
-					}
-					break;
-				case 3:
-					break;
-				case 4:
-					LeaveSubMenu();
-					break;
-				}
-			}while (choice < 4);
-			
-			
-		}
-	};
-	/* 
-	private Movie movie;
-	private Cinema cinema;
-	private SeatingStatus seatStatus;
-	private PricePolicy.ShowType showType;
-	private Date time;
-	private String id;*/
-	private MenuAction actionAddShow = new MenuAction(){
-		public void Show(Object o){
-			PrintLine("Input the Movie ID:");
-			String movieID = AskForString();
-			Movie movie = dataMgr.findMovieWithID(movieID);
-			PrintLine("Input the Cineplex:");
-			String cineplexName = AskForString();
-			Cineplex cineplex = dataMgr.findCineplexWithName(cineplexName);
-			PrintLine("Input new ciname:");
-			String cinemaName = AskForString();
-			Cinema cinema = cineplex.findCinemaWithName(cinemaName);
-			String type = AskForString("Input the showType (2D, 3D, or IMAX):");
-			PricePolicy.ShowType showType;
-			while(true){
-				if(type.compareToIgnoreCase("2D")==0)
-					showType=PricePolicy.ShowType.TwoD;
-				else if(type.compareToIgnoreCase("3D")==0)
-					showType=PricePolicy.ShowType.ThreeD;
-				else if(type.compareToIgnoreCase("IMAX")==0)
-					showType=PricePolicy.ShowType.IMAX;
-				else{
-					type=AskForString("Invalid type. Please re-enter (2D, 3D, or IMAX):");
-					continue;
-				}
-				break;
-			}
-			
-			
-			PrintLine("Input the Show ID:");
-			//String showID = AskForString();
-			Show show = new Show (movie,cinema,showType,AskForTime());
-			dataMgr.addShow(show);
-			PrintLine("Add Succesfully!");
-			
-		}
-	};
-/*
-	private MenuAction actionDeleteShow= new MenuAction(){
-		public void Show(Object o){
-			PrintLine("Input the Show ID:");
-			String showID = AskForString();
-			Show show = dataMgr.findShowWithID(showID);
-			Movie movie = show.getMovie();
-			movie.removeShow(show);
-			PrintLine("Delete Sucessfully!");
-		}
-	};
-*/
-
-	private MenuAction menuRevenues = new MenuAction(){
-		public void Show(Object o){
-			Menu menu = new Menu("Revenue Printing", "Revenue Menu", new MenuOption[]{
-					new MenuOption("Movie", actionPrintRevenue, 0),
-					new MenuOption("Cinema", actionPrintRevenue, 1),
-					new MenuOption("Day", actionPrintRevenue, 2),
-					new MenuOption("Month", actionPrintRevenue, 3),
-					new MenuOption("Back",actionBack)
-			});
-			ShowMenu(menu);
-		}
-	};
-	
-	private MenuAction actionBack = new MenuAction(){
-		public void Show(Object o){
-			LeaveSubMenu();
-		}
-	};
-	//==============Edit Movies =============
-	
 	private MenuAction actionCreateMovie = new MenuAction(){
 		public void Show(Object o){
 			Movie movie;
@@ -899,6 +779,106 @@ public class ConsoleInterface {
 		}
 	};
 	
+	
+
+	// =================Add/Edit Shows============================
+	private MenuAction menuEditShows= new MenuAction(){
+		public void Show(Object o){
+			Menu menu = new Menu("Staff Menu", "EditShows", new MenuOption[]{
+					new MenuOption("Edit", actionEditShow, 0),
+					new MenuOption("Add", actionAddShow, 1),
+					new MenuOption("Delete",actionChangeEndOfShow, 2),
+					new MenuOption("Back",actionBack)
+			});
+			ShowMenu(menu);
+		}
+	};
+	private MenuAction actionEditShow= new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Input the Show ID:");
+			String showID = AskForString();
+			Show show = dataMgr.findShowWithID (showID);
+			if(show==null){
+				PrintLine("The show you specified does not exist.");
+				return;
+			}
+			int choice = 0;
+			do{
+				PrintLine("Select the part you want to edit:");
+				PrintLine("1. Cinema:");
+				PrintLine("2. Time:");
+				PrintLine("3. Show Type:");
+				PrintLine("4. Back");
+				choice = AskForChoice(1,4);
+				switch (choice){
+				case 1:
+					if (show.hasSales(dataMgr))
+						PrintLine("Can not change the Cinema now.");
+					else{
+						PrintLine("Input the Cineplex:");
+						String cineplexName = AskForString();
+						Cineplex cineplex = dataMgr.findCineplexWithName(cineplexName);
+						PrintLine("Input new ciname:");
+						String cinemaName = AskForString();
+						Cinema cinema = cineplex.findCinemaWithName(cinemaName);
+						show.setCinema(cinema);
+						PrintLine("Edit sucessfully!");
+						}
+					break;
+				case 2:
+					if (show.hasSales(dataMgr))
+						PrintLine("Can not change the Show Time now.");
+					else{
+						AskForTime();
+					}
+					break;
+				case 3:
+					break;
+				case 4:
+					return;
+				}
+			}while (choice < 4);
+			
+			
+		}
+	};
+	private MenuAction actionAddShow = new MenuAction(){
+		public void Show(Object o){
+			PrintLine("Input the Movie ID:");
+			String movieID = AskForString();
+			Movie movie = dataMgr.findMovieWithID(movieID);
+			PrintLine("Input the Cineplex:");
+			String cineplexName = AskForString();
+			Cineplex cineplex = dataMgr.findCineplexWithName(cineplexName);
+			PrintLine("Input new ciname:");
+			String cinemaName = AskForString();
+			Cinema cinema = cineplex.findCinemaWithName(cinemaName);
+			String type = AskForString("Input the showType (2D, 3D, or IMAX):");
+			PricePolicy.ShowType showType;
+			while(true){
+				if(type.compareToIgnoreCase("2D")==0)
+					showType=PricePolicy.ShowType.TwoD;
+				else if(type.compareToIgnoreCase("3D")==0)
+					showType=PricePolicy.ShowType.ThreeD;
+				else if(type.compareToIgnoreCase("IMAX")==0)
+					showType=PricePolicy.ShowType.IMAX;
+				else{
+					type=AskForString("Invalid type. Please re-enter (2D, 3D, or IMAX):");
+					continue;
+				}
+				break;
+			}
+			
+			
+			PrintLine("Input the Show ID:");
+			//String showID = AskForString();
+			Show show = new Show (movie,cinema,showType,AskForTime());
+			dataMgr.addShow(show);
+			PrintLine("Add Succesfully!");
+			
+		}
+	};
+	//====================Revenues ============================
 	private MenuAction actionPrintRevenue = new MenuAction(){
 		public void Show(Object o){
 			String s;
@@ -914,9 +894,35 @@ public class ConsoleInterface {
 				Print("Please enter the end date: ");
 				cal2 = AskForDate();
 			}
+			if (cal1==null)
+				PrintLine("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
+			else if (cal2.compareTo(cal1)>=0)
+				PrintLine("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
+			else
+				PrintLine("Wrong input!!!");
 		}
 	};
 	
+	
+
+	//=================Change pricing policy======================
+	private MenuAction menuChangePricingPolicy = new MenuAction(){
+		public void Show(Object o){
+			Menu menu = new Menu("Price Policy", "Price Policy Menu", new MenuOption[]{
+					new MenuOption("Change base price", actionChangePolicy, 0),
+					new MenuOption("Change student discount", actionChangePolicy, 1),
+					new MenuOption("Change senior discount", actionChangePolicy, 2),
+					new MenuOption("Change increment for blockbuster", actionChangePolicy, 3),
+					new MenuOption("Change increment for 3D", actionChangePolicy, 4),
+					new MenuOption("Change increment for IMAX", actionChangePolicy, 5),
+					new MenuOption("Change increment for premium", actionChangePolicy, 6),
+					new MenuOption("Change GST", actionChangePolicy, 7),
+					new MenuOption("Print current pricing policy", actionChangePolicy, 8),
+					new MenuOption("Back",actionBack)
+			});
+			ShowMenu(menu);
+		}
+	};
 	private MenuAction actionChangePolicy = new MenuAction(){
 		public void Show(Object o){
 			int choice = (int) o;
