@@ -161,6 +161,19 @@ public class DataSystem implements java.io.Serializable {
 		}
 		return curMovs.toArray(new Movie[0]);
 	}
+	
+	public int getAllCurrentMoviesCount()
+	{
+		int count = 0;
+		for(int i = 0; i<this.getMovieCount(); i++)
+		{
+			Movie m = this.getMovie(i);
+			if(m.hasCurrentShow())
+				count++;
+		}
+		return count;
+	}
+	
 	public Movie[] getAllNonEndMovies()
 	{
 		ArrayList<Movie> curMovs = new ArrayList<Movie>();
@@ -247,7 +260,7 @@ public class DataSystem implements java.io.Serializable {
 			// confirm movie
 			if(movie!=null && this.getInvoice(i).getTickets()[0].getShow().getMovie()!= movie)
 				continue;
-			// confirm cieplex
+			// confirm cineplex
 			if(cineplex!=null && this.getInvoice(i).getTickets()[0].getShow().getCinema().getCineplex()!=cineplex)
 				continue;
 			// confirm time
