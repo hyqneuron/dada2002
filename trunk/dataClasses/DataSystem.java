@@ -102,6 +102,11 @@ public class DataSystem implements java.io.Serializable {
 	public Show getShow(int i){
 		return shows.get(i);
 	}
+	public void removeShow(Show show){
+		show.getMovie().removeShow(show);
+		show.getCinema().getCineplex().removeShow(show);
+		shows.remove(show);
+	}
 	public void addStaff(Staff staff){
 		staffs.add(staff);
 	}

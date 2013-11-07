@@ -30,6 +30,9 @@ public class Show implements java.io.Serializable{
 	public PricePolicy.ShowType getShowType() {
 		return showType;
 	}
+	public void setShowType(PricePolicy.ShowType showType){
+		this.showType = showType;
+	}
 	public SeatingStatus getSeatingStatus(){
 		return seatStatus;
 	}
