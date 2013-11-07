@@ -45,6 +45,11 @@ public class Cineplex  implements java.io.Serializable{
 		if(!currentMovies.contains(m))
 			currentMovies.add(m);
 	}
+	public void removeShow(Show show){
+		if(currentShows.contains(show))
+			currentShows.remove(show);
+		removeOldMovies();
+	}
 	private void removeOldShows()
 	{
 		for(int i = currentShows.size() -1 ; i>=0; i--)
