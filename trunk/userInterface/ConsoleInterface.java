@@ -252,6 +252,8 @@ public class ConsoleInterface {
 		// ticket number, movie name, cineplex name, cinema name, seat name, price
 		PrintLine("");
 		Format("Ticket number: %s%n", ticket.getID());
+		Format("Customer type: %s%n", ticket.getCustomerType());
+		Format("Show type: %s%n", ticket.getShow().getShowType());
 		Format("Movie: %s%n", ticket.getShow().getMovie().getName());
 		Format("Cineplex: %s%n", ticket.getShow().getCinema().getCineplex().getName());
 		Format("Cinema: %s%n", ticket.getShow().getCinema().getName());
@@ -392,7 +394,7 @@ public class ConsoleInterface {
 			return;
 		}
 		// check for password
-		String password = AskForString("Please entr password: ");
+		String password = AskForString("Please enter password: ");
 		if(isCustomer)
 		{
 			if(customer.getPassword().compareTo(password)!=0)
@@ -452,7 +454,8 @@ public class ConsoleInterface {
 						new MenuOption("Book movie",			actionBookMovie),
 						new MenuOption("Add/Edit Movies", 		menuEditMovies),
 						new MenuOption("Add/Edit Shows", 		menuEditShows),
-						new MenuOption("Query Reveues", 		actionPrintRevenue),
+						new MenuOption("Query Reveues(get total)", 		actionPrintRevenue1),
+						new MenuOption("Query Reveues(get list)", 		actionPrintRevenue2),
 						new MenuOption("Change Pricing Policy", menuChangePricingPolicy),
 						new MenuOption("Show GUI",				actionShowGUI),
 						new MenuOption("Log out", 				actionLogout),
@@ -945,7 +948,7 @@ public class ConsoleInterface {
 		}
 	};
 	//====================Revenues ============================
-	private MenuAction actionPrintRevenue = new MenuAction(){
+	private MenuAction actionPrintRevenue1 = new MenuAction(){
 		public void Show(Object o){
 			String s;
 			Movie m = null;
@@ -961,15 +964,24 @@ public class ConsoleInterface {
 				cal2 = AskForDate();
 			}
 			if (cal1==null)
-				PrintLine("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
+				PrintLine("Revenue:  SGD$" + dataMgr.calcRevenue(m, c, cal1, cal2));
 			else if (cal2.compareTo(cal1)>=0)
-				PrintLine("Revenue: " + dataMgr.calcRevenue(m, c, cal1, cal2));
+				PrintLine("Revenue:  SGD$" + dataMgr.calcRevenue(m, c, cal1, cal2));
 			else
 				PrintLine("Wrong input!!!");
 		}
 	};
 	
-	
+	private MenuAction actionPrintRevenue2 = new MenuAction(){
+		public void Show(Object o){
+			Movie m[] = dataMgr.getAllCurrentMovies();
+			Cineplex c = null;
+			Date cal1 = null ,cal2 = null;
+			c = dataMgr.findCineplexWithName(AskForString("Please enter the cineplex name: "));
+			for (int i = 0;i < dataMgr.getAllCurrentMoviesCount();i++)
+				PrintLine("Revenue: " + m[i].getName() + " SGD$" + dataMgr.calcRevenue(m[i], c, cal1, cal2));
+		}
+	};
 
 	//=================Change pricing policy======================
 	private MenuAction menuChangePricingPolicy = new MenuAction(){
@@ -1058,5 +1070,4 @@ public class ConsoleInterface {
 			};
 		}
 	};
-
 }
