@@ -964,9 +964,9 @@ public class ConsoleInterface {
 				cal2 = AskForDate();
 			}
 			if (cal1==null)
-				PrintLine("Revenue:  SGD$" + dataMgr.calcRevenue(m, c, cal1, cal2));
+				Format("Revenue:  SGD %5.1f%n", dataMgr.calcRevenue(m, c, cal1, cal2));
 			else if (cal2.compareTo(cal1)>=0)
-				PrintLine("Revenue:  SGD$" + dataMgr.calcRevenue(m, c, cal1, cal2));
+				Format("Revenue:  SGD %5.1f%n", dataMgr.calcRevenue(m, c, cal1, cal2));
 			else
 				PrintLine("Wrong input!!!");
 		}
@@ -979,7 +979,9 @@ public class ConsoleInterface {
 			Date cal1 = null ,cal2 = null;
 			c = dataMgr.findCineplexWithName(AskForString("Please enter the cineplex name: "));
 			for (int i = 0;i < dataMgr.getAllCurrentMoviesCount();i++)
-				PrintLine("Revenue: " + m[i].getName() + " SGD$" + dataMgr.calcRevenue(m[i], c, cal1, cal2));
+				Format("Revenue:  %s SGD %6.1f%n", 
+								m[i].getName(), 
+								dataMgr.calcRevenue(m[i], c, cal1, cal2));
 		}
 	};
 

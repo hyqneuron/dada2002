@@ -386,6 +386,30 @@ public class DataSystem implements java.io.Serializable {
 		d.addShow(s3_2);
 		d.addShow(s3_3);
 		
+		// now we book all of the seats in s3_3
+		ArrayList<Ticket> tickets3_3 = new ArrayList<Ticket>();
+		PricePolicy.CustomerType cusType = d.getPricePolicy().getCustomerType(21);
+		
+		// we got from A to Z, 1 to 40
+		for(int i = 0; i<sp.getRowCount(); i++){
+			for(int j = 0; j<sp.getColumnCount(); j++){
+				// create ticket
+				Ticket t = new Ticket(
+						s3_3, sp.getSeatName(i, j), cusType, d.getPricePolicy().getPrice(cusType, s3_3));
+				tickets3_3.add(t);
+				// assign ticket to seat
+				s3_3.getSeatingStatus().AssignSeat(t, i, j);
+			}
+		}
+		Ticket[] tmpl = new Ticket[0];
+		Invoice inv = new Invoice(tickets3_3.toArray(tmpl), null);
+		d.addInvoice(inv);
+		/*
+		tickets3_3[i] = new Ticket(show, seatName, cusType, 
+				dataMgr.getPricePolicy().getPrice(cusType, show));
+		// assign ticket to seat
+		status.AssignSeat(tickets[i], indices[0], indices[1]);
+		*/
 		// customer and staff
 		Customer cus1 = new Customer("cus1", "password");
 		Customer cus2 = new Customer("cus2", "password");
