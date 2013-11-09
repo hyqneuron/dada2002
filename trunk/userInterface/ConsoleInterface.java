@@ -855,7 +855,8 @@ public class ConsoleInterface {
 					new MenuOption("Change Cinema", actionEditShow, 0), 
 					new MenuOption("Change Time", actionEditShow, 1), 
 					new MenuOption("Change Type", actionEditShow, 2), 
-					new MenuOption("Remove Show", actionEditShow, 3)
+					new MenuOption("Remove Show", actionEditShow, 3),
+					new MenuOption("Back", 	  actionBack)
 				},
 				priorA, show
 			);
@@ -868,7 +869,7 @@ public class ConsoleInterface {
 			int choice = (int)o;
 			switch (choice){
 			case 0: // cinema
-				String cinemaName = AskForString("Input the Cineplex:");
+				String cinemaName = AskForString("Input the Cinema name:");
 				Cinema cinema = showEditing.getCinema().getCineplex().findCinemaWithName(cinemaName);
 				if(cinema==null)
 				{

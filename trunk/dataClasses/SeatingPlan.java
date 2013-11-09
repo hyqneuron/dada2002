@@ -68,8 +68,10 @@ public class SeatingPlan  implements java.io.Serializable{
 		for(int i = 0; i< getColumnCount(); i++){
 			if(isSeat(rowIdx, i))
 				seatCount++;
-			if(seatCount==seatNameColIdx)
+			if(seatCount==seatNameColIdx){
 				colIdx = i;
+				break;
+			}
 		}
 		if(colIdx==-1)
 			return null;
