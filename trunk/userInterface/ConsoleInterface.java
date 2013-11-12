@@ -2,7 +2,6 @@ package userInterface;
 import dataClasses.*;
 
 import java.util.Date;
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Stack;
@@ -880,7 +879,14 @@ public class ConsoleInterface {
 				break;
 			case 1: // time
 				Date time = AskForTime();
+				Date timeTmp = (Date)showEditing.getTime().clone();
 				showEditing.setTime(time);
+				Show conf = dataMgr.getConflictingShow(showEditing);
+				if(conf!=null){
+					PrintLine("Cannot change time as the new time conflicts with another show.");
+					PrintShow(conf);
+					showEditing.setTime(timeTmp);
+				}
 				break;
 			case 2: // type
 				String type = AskForString("Please enter the show type (2D, 3D, or IMAX): ");
@@ -943,6 +949,12 @@ public class ConsoleInterface {
 			}
 			PrintLine("Please enter the time of the show:");
 			Show show = new Show (movie,cinema,showType,AskForTime());
+			Show conf = dataMgr.getConflictingShow(show);
+			if(conf!=null){
+				PrintLine("Another show with conflicting time and venue exists.");
+				PrintShow(conf);
+				return;
+			}
 			dataMgr.addShow(show);
 			PrintLine("Add Succesfully!");
 			PrintShow(show);
