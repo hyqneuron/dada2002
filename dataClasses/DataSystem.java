@@ -253,6 +253,15 @@ public class DataSystem implements java.io.Serializable {
 		return null;
 	}
 	
+	// checks whether or not another show is at the same cinema at the same time
+	public Show getConflictingShow(Show show){
+		for(int i = 0; i<this.getShowCount(); i++){
+			if(this.getShow(i).ConflictsWith(show))
+				return this.getShow(i);
+		}
+		return null;
+	}
+	
 	public float calcRevenue(Movie movie, Cineplex cineplex, Date first, Date last){
 		float  revenue = 0;
 		for(int i = 0; i<this.getInvoiceCount(); i++)
